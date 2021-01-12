@@ -10,13 +10,9 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-from .jwk import JWKey
-
 
 @dataclass
 class HybridCipher:
-    jwkey: JWKey
-
     def _get_nonce_length(self):
         return algorithms.AES.block_size // 8
 
@@ -49,11 +45,11 @@ class HybridCipher:
 
         return json.loads(payload)["v"]
 
-    def encrypt(self, data: Dict):
+    def encrypt(self, rsa_public_key, data: Dict):
+        print(type(rsa_public_key))
         password = uuid.uuid4().hex
         encrypted_payload = self._encrypt_sync(data, password.encode())
 
-        rsa_public_key = self.jwkey.get_rsa_public_key()
         encrypted_password = base64.b64encode(
             rsa_public_key.encrypt(
                 password.encode("utf-8"),
@@ -67,9 +63,8 @@ class HybridCipher:
 
         return f"{encrypted_password};{encrypted_payload}"
 
-    def decrypt(self, cipher_text: str):
+    def decrypt(self, rsa_private_key, cipher_text: str):
         encrypted_password, encrypted_payload = cipher_text.split(";")
-        rsa_private_key = self.jwkey.get_rsa_private_key()
 
         password = rsa_private_key.decrypt(
             base64.b64decode(encrypted_password),

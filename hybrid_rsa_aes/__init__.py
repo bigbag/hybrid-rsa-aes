@@ -1,4 +1,3 @@
-from .hybrid_cipher import HybridCipher
-from .jwk import JWKey
+from .cipher import HybridCipher
 
-__all__ = ["HybridCipher", "JWKey"]
+__all__ = ["HybridCipher"]

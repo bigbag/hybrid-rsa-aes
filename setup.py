@@ -43,7 +43,7 @@ setup(
     platforms=["POSIX"],
     classifiers=CLASSIFIERS,
     python_requires=">=3.7",
-    install_requires=["cryptography==3.3.1", "jwcrypto==0.8"],
+    install_requires=["cryptography==3.3.1"],
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
