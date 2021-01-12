@@ -2,7 +2,6 @@ import base64
 import json
 import os
 import uuid
-from dataclasses import dataclass
 from typing import Dict
 
 from cryptography.hazmat.backends import default_backend
@@ -11,7 +10,6 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 
-@dataclass
 class HybridCipher:
     def _get_nonce_length(self):
         return algorithms.AES.block_size // 8
@@ -46,7 +44,6 @@ class HybridCipher:
         return json.loads(payload)["v"]
 
     def encrypt(self, rsa_public_key, data: Dict):
-        print(type(rsa_public_key))
         password = uuid.uuid4().hex
         encrypted_payload = self._encrypt_sync(data, password.encode())
 
