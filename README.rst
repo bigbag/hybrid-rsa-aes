@@ -7,7 +7,7 @@ hybrid-rsa-aes
    :target: https://pypi.python.org/pypi/hybrid-rsa-aes
 
 
-**sqlalchemy-state-machine** is a helper for hybrid AES-RSA encryption.
+**hybrid-rsa-aes** is a helper for hybrid AES-RSA encryption.
 
 
 Installation
@@ -42,4 +42,4 @@ Basic Usage
 License
 -------
 
-sqlalchemy-state-machine is developed and distributed under the Apache 2.0 license.
+hybrid-rsa-aes is developed and distributed under the Apache 2.0 license.
