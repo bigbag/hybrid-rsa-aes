@@ -44,4 +44,4 @@ hybrid-rsa-aes is developed and distributed under the Apache 2.0 license.
 
 ## Reporting a Security Vulnerability
 
-See our [security policy](https://github.com/bigbag/hybrid-rsa-aese/security/policy).
+See our [security policy](https://github.com/bigbag/hybrid-rsa-aes/security/policy).
