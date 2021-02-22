@@ -1,6 +1,7 @@
 # hybrid-rsa-aes
 
 [![CI](https://github.com/bigbag/hybrid-rsa-aes/workflows/CI/badge.svg)](https://github.com/bigbag/hybrid-rsa-aes/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/bigbag/hybrid-rsa-aes/branch/main/graph/badge.svg)](https://codecov.io/gh/bigbag/hybrid-rsa-aes)
 [![pypi](https://img.shields.io/pypi/v/hybrid-rsa-aes.svg)](https://pypi.python.org/pypi/hybrid-rsa-aes)
 [![downloads](https://img.shields.io/pypi/dm/hybrid-rsa-aes.svg)](https://pypistats.org/packages/hybrid-rsa-aes)
 [![versions](https://img.shields.io/pypi/pyversions/hybrid-rsa-aes.svg)](https://github.com/bigbag/hybrid-rsa-aes)
