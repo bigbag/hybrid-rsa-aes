@@ -42,7 +42,7 @@ setup(
     platforms=["POSIX"],
     classifiers=CLASSIFIERS,
     python_requires=">=3.7",
-    install_requires=["cryptography==3.4.6"],
+    install_requires=["cryptography==3.4.7"],
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
