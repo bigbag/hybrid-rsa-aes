@@ -10,6 +10,7 @@
 
 **hybrid-rsa-aes** is a helper for hybrid AES-RSA encryption.
 
+* [Project Changelog](https://github.com/bigbag/hybrid-rsa-aes/blob/main/CHANGELOG.md)
 
 ## Installation
 
