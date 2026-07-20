@@ -1,10 +1,13 @@
 # Changelog
 
+## Unreleased
+
+* Update changelog [Pavel Liashkov]
+
 ## 1.0.0 (2026-07-20)
 
-* Breaking security rewrite: replace AES-CTR with authenticated AES-256-GCM and versioned JSON envelopes.
-* Require Python 3.11–3.14 and RSA keys of at least 2048 bits.
-* Replace legacy setuptools/requirements tooling with uv, Hatchling, Ruff, mypy, and trusted publishing.
+* Update changelog [Pavel Liashkov]
+* feat: rewrite hybrid encryption library for 1.0.0 [Pavel Liashkov]
 
 ## 0.5.0 (2024-10-18)
 
@@ -42,7 +45,7 @@
 
 ## 0.2.6 (2021-02-10)
 
-* Bump cryptography from 3.3.1 to 3.4.4 [dependabot[bot]]
+* Bump cryptography from 3.3.1 to 3.4.4 (#5) [dependabot[bot]]
 * Bump version [Pavel Liashkov]
 * Bump version [Pavel Liashkov]
 
@@ -69,4 +72,15 @@
 
 ## 0.2.0 (2021-01-14)
 
-* Update readme [Pavel Liashkov]
+* Update readme (#1) [Pavel Liashkov]
+
+## 0.1.0 (2021-01-12)
+
+* Initial commit [Pavel Liashkov]
+* Add package base [Pavel Liashkov]
+* Add Hybrid cipher [Pavel Liashkov]
+* Add code quality workflow [Pavel Liashkov]
+* Purge jwk support [Pavel Liashkov]
+* Add tests [Pavel Liashkov]
+* Purge debug info [Pavel Liashkov]
+
