@@ -1,18 +1,69 @@
-[tool.black]
+[build-system]
+requires = ["hatchling>=1.31.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hybrid-rsa-aes"
+version = "1.0.0"
+description = "Authenticated hybrid RSA-OAEP and AES-GCM encryption for JSON payloads"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [{ name = "Pavel Liashkov", email = "pavel.liashkov@protonmail.com" }]
+keywords = ["aes", "cryptography", "encryption", "hybrid-encryption", "rsa"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Security :: Cryptography",
+  "Topic :: Software Development :: Libraries",
+]
+dependencies = ["cryptography>=49.0.0"]
+
+[dependency-groups]
+dev = [
+  "mypy>=2.3.0",
+  "pytest>=9.1.1",
+  "pytest-cov>=7.1.0",
+  "ruff>=0.15.22",
+]
+
+[project.urls]
+Changelog = "https://github.com/bigbag/hybrid-rsa-aes/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/bigbag/hybrid-rsa-aes"
+Issues = "https://github.com/bigbag/hybrid-rsa-aes/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hybrid_rsa_aes"]
+
+[tool.ruff]
 line-length = 100
-target-version = ['py38']
-include = '\.pyi?$'
+target-version = "py311"
 
-[tool.vulture]
-min_confidence = 70
-sort_by_size = true
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
 
-[tool.isort]
-line_length = 100
-multi_line_output = 3
-include_trailing_comma = true
-indent='    '
-sections = ['FUTURE','STDLIB','THIRDPARTY','FIRSTPARTY','LOCALPROJECT','LOCALFOLDER']
-default_section = 'THIRDPARTY'
-known_standard_library = []
-known_localproject = ['hybrid_rsa_aes','tests']
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+files = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-config"
+
+[tool.coverage.run]
+branch = true
+source = ["hybrid_rsa_aes"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true

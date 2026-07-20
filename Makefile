@@ -1,144 +1,46 @@
-.PHONY: sys/changelog
-## Generating changelog file
-sys/changelog:
-	@echo "Generating CHANGELOG.md..."
-	@echo "" > CHANGELOG.md;
-	@previous_tag=0; \
-	for current_tag in $$(git tag --sort=-creatordate); do \
-		if [ "$$previous_tag" != 0 ]; then \
-			tag_date=$$(git log -1 --pretty=format:'%ad' --date=short $${previous_tag}); \
-			printf "\n## $${previous_tag} ($${tag_date})\n\n" >> CHANGELOG.md; \
-			git log $${current_tag}...$${previous_tag} --pretty=format:'*  %s [%an]' --reverse | grep -v Merge >> CHANGELOG.md; \
-			printf "\n" >> CHANGELOG.md; \
-		fi; \
-		previous_tag=$${current_tag}; \
-	done
-	@echo "CHANGELOG.md generated successfully."
-
-.PHONY: sys/tag
-## Create and push tag
-sys/tag:
-	@read -p "Enter tag version (e.g., 1.0.0): " TAG; \
-	if [[ $$TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$$ ]]; then \
-		git tag -a $$TAG -m $$TAG; \
-		git push origin $$TAG; \
-		echo "Tag $$TAG created and pushed successfully."; \
-	else \
-		echo "Invalid tag format. Please use X.Y.Z (e.g., 1.0.0)"; \
-		exit 1; \
-	fi
-
-.PHONY: venv/install
-## Install dev and lint dependencies
-venv/install:
-	@echo "install virtual environment..."
-	@exec python -m pip install --upgrade pip
-	@exec pip install --no-cache-dir -e .
-	@exec pip install --no-cache-dir -r requirements/linters.txt
-	@exec pip install --no-cache-dir -r requirements/tests.txt
-	@exec make dev/clean
-
-.PHONY: dev/lint
-## Running all linters
-dev/lint:
-	@echo "Run isort"
-	@exec isort .
-	@echo "Run black"
-	@exec black hybrid_rsa_aes tests
-	@echo "Run flake"
-	@exec flake8 hybrid_rsa_aes tests
-	@echo "Run bandit"
-	@exec bandit -r hybrid_rsa_aes/*
-	@echo "Run mypy"
-	@exec mypy hybrid_rsa_aes
-	@exec rm -rf .mypy_cache
-
-.PHONY: dev/test
-## Run all tests
-dev/test:
-	@echo "Run tests"
-	PYTHONPATH=${PYTHONPATH} PYTHONASYNCIODEBUG=x py.test -svvv -rs --cov hybrid_rsa_aes --cov-report term-missing -x
-	@exec rm -rf .pytest_cache
-
-.PHONY: dev/clean
-## Clear temp files
-dev/clean:
-	@echo "Clear temp files"
-	@rm -rf `find . -name __pycache__`
-	@rm -rf `find . -type f -name '*.py[co]' `
-	@rm -rf `find . -type f -name '*~' `
-	@rm -rf `find . -type f -name '.*~' `
-	@rm -rf `find . -type f -name '@*' `
-	@rm -rf `find . -type f -name '#*#' `
-	@rm -rf `find . -type f -name '*.orig' `
-	@rm -rf `find . -type f -name '*.rej' `
-	@rm -rf .coverage
-	@rm -rf coverage.html
-	@rm -rf coverage.xml
-	@rm -rf htmlcov
-	@rm -rf build
-	@rm -rf cover
-	@python setup.py clean
-	@rm -rf .develop
-	@rm -rf .flake
-	@rm -rf .install-deps
-	@rm -rf *.egg-info
-	@rm -rf .pytest_cache
-	@rm -rf dist
+PROJECT_NAME := hybrid-rsa-aes
+SRC_PATH := src/hybrid_rsa_aes
+LINT_PATHS := src tests examples
+UV ?= uv
 
 .DEFAULT_GOAL := help
 
-# Inspired by <http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html>
-# sed script explained:
-# /^##/:
-# 	* save line in hold space
-# 	* purge line
-# 	* Loop:
-# 		* append newline + line to hold space
-# 		* go to next line
-# 		* if line starts with doc comment, strip comment character off and loop
-# 	* remove target prerequisites
-# 	* append hold space (+ newline) to line
-# 	* replace newline plus comments by `---`
-# 	* print line
-# Separate expressions are necessary because labels cannot be delimited by
-# semicolon; see <http://stackoverflow.com/a/11799865/1968>
-.PHONY: help
-help:
-	@echo "$$(tput bold)Available rules:$$(tput sgr0)"
-	@echo
-	@sed -n -e "/^## / { \
-		h; \
-		s/.*//; \
-		:doc" \
-		-e "H; \
-		n; \
-		s/^## //; \
-		t doc" \
-		-e "s/:.*//; \
-		G; \
-		s/\\n## /---/; \
-		s/\\n/ /g; \
-		p; \
-	}" ${MAKEFILE_LIST} \
-	| LC_ALL='C' sort --ignore-case \
-	| awk -F '---' \
-		-v ncol=$$(tput cols) \
-		-v indent=19 \
-		-v col_on="$$(tput setaf 6)" \
-		-v col_off="$$(tput sgr0)" \
-	'{ \
-		printf "%s%*s%s ", col_on, -indent, $$1, col_off; \
-		n = split($$2, words, " "); \
-		line_length = ncol - indent; \
-		for (i = 1; i <= n; i++) { \
-			line_length -= length(words[i]) + 1; \
-			if (line_length <= 0) { \
-				line_length = ncol - indent - length(words[i]) - 1; \
-				printf "\n%*s ", -indent, " "; \
-			} \
-			printf "%s ", words[i]; \
-		} \
-		printf "\n"; \
-	}' \
-	| more $(shell test $(shell uname) = Darwin && echo '--no-init --raw-control-chars')
+.PHONY: help venv/install/main venv/install/all lint/ruff lint/mypy lint format test build clean sys/changelog sys/tag
+
+help: ## Display this help message
+	@awk 'BEGIN { FS = ":.*##"; printf "\nUsage:\n  make <target>\n\nTargets:\n" } /^[a-zA-Z0-9_./-]+:.*##/ { printf "  \033[36m%-24s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
+
+venv/install/main: ## Install runtime dependencies
+	$(UV) sync --no-group dev
+
+venv/install/all: ## Install runtime and development dependencies
+	$(UV) sync --all-groups
+
+lint/ruff: ## Check formatting and lint with Ruff
+	$(UV) run --locked ruff format --check $(LINT_PATHS)
+	$(UV) run --locked ruff check $(LINT_PATHS)
+
+lint/mypy: ## Type-check the source package
+	$(UV) run --locked mypy $(SRC_PATH)
+
+lint: lint/ruff lint/mypy ## Run all lint checks
+
+test: ## Run tests with coverage
+	$(UV) run --locked pytest --cov=hybrid_rsa_aes --cov-report=term-missing
+
+build: ## Build source and wheel distributions
+	$(UV) build
+
+format: ## Format and auto-fix lint issues
+	$(UV) run --locked ruff format $(LINT_PATHS)
+	$(UV) run --locked ruff check --fix $(LINT_PATHS)
+
+clean: ## Remove generated files and caches
+	rm -rf .coverage .mypy_cache .pytest_cache .ruff_cache build dist
+	find . -type d -name __pycache__ -prune -exec rm -rf {} +
+
+sys/changelog: ## Generate CHANGELOG.md from semantic-version tags
+	@tags="$$(git tag --list 'v[0-9]*' '[0-9]*' --sort=-version:refname)"; test -n "$$tags"; { printf '# Changelog\n\n'; for tag in $$tags; do printf '## %s (%s)\n\n' "$${tag#v}" "$$(git log -1 --format=%as "$$tag")"; git log --no-merges "$$tag" --format='* %s [%an]'; printf '\n'; done; } > CHANGELOG.md
+
+sys/tag: ## Create and push a vX.Y.Z release tag matching pyproject.toml
+	@read -r -p "Enter tag version (e.g., 1.0.0): " TAG; test "$$( $(UV) run --locked python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])' )" = "$$TAG"; git diff --quiet && git diff --cached --quiet; git tag -a "v$$TAG" -m "Release v$$TAG" && git push origin "v$$TAG"
