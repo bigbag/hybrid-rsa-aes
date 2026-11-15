@@ -4,7 +4,7 @@ Authenticated hybrid RSA and AES encryption for JSON payloads.
 
 ## Requirements
 
-- Python 3.11–3.14
+- Python 3.11–3.15
 - An RSA key pair of at least 2048 bits
 
 ## Install
