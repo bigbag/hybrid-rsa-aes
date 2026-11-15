@@ -1,8 +1,10 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (2026-11-15)
 
 * Update changelog [Pavel Liashkov]
+* Bump cryptography from 49.0.0 to 50.0.0 (#9) [dependabot[bot]]
+* Add Python 3.15 support and bump version to 1.1.0 [Pavel Liashkov]
 
 ## 1.0.0 (2026-07-20)
 
